@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+//  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model HcmInterviews {
+  id                  Int                        @id @default(autoincrement())
+  job_serial_no       String
+  user_num            String?
+  full_name           String
+  role_applied_for    String
+  interview_date      DateTime
+  interview_time      String
+  interview_location  String
+  is_attended         Boolean                    @default(false)
+  interview_status    InterviewStatus            @default(Pending)
+  instructions        String?                    @db.Text
+  created_at          DateTime                   @default(now())
+  updated_at          DateTime                   @updatedAt
+  
+  // Relations
+  attendees           HcmInterviewAttendees[]
+  reports             HcmInterviewAttendeeReports[]
+  contract_terms      HcmContractTerms[]
+
+  @@map("hcm_interviews")
+}
+
+model HcmInterviewAttendees {
+  id              Int           @id @default(autoincrement())
+  interview_id    Int
+  attendee_name   String
+  attendee_email  String
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  
+  // Relations
+  interview       HcmInterviews @relation(fields: [interview_id], references: [id])
+
+  @@map("hcm_interview_attendees")
+}
+
+model HcmInterviewAttendeeReports {
+  id                          Int           @id @default(autoincrement())
+  interview_id                Int
+  is_interview_hold           String
+  is_another_interview        String?
+  is_applicant_hired          String
+  reason_for_another_interview String?      @db.Text
+  description                 String?       @db.Text
+  created_at                  DateTime      @default(now())
+  updated_at                  DateTime      @updatedAt
+  
+  // Relations
+  interview                   HcmInterviews @relation(fields: [interview_id], references: [id])
+
+  @@map("hcm_interview_attendee_reports")
+}
+
+model HcmContractTerms {
+  id                    Int               @id @default(autoincrement())
+  interview_id          Int
+  contract_type         ContractType
+  contract_tenure       String
+  work_hours            String
+  employment_date       DateTime
+  start_date            DateTime
+  probation             String?
+  date_of_confirmation  DateTime?
+  basic_salary_amount   String
+  entitlement           String
+  benefit_type          String?
+  contract_status       ContractStatus    @default(Pending_Approval)
+  created_at            DateTime          @default(now())
+  updated_at            DateTime          @updatedAt
+  
+  // Relations
+  interview             HcmInterviews     @relation(fields: [interview_id], references: [id])
+
+  @@map("hcm_contract_terms")
+}
+
+enum InterviewStatus {
+  Pending
+  Accepted
+  Rejected
+  Rescheduled
+  Cancelled
+  Hired
+}
+
+enum ContractStatus {
+  Pending_Approval
+  Approved
+  Rejected
+  Signed
+  Declined
+}
+
+enum ContractType {
+  Permanent
+  Temporary_Intern
+  Contract
+  Consultant
+}
