@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import InterviewController from '../controllers/interviewController';
+import { interviewController } from '../controllers/interviewController';
 import { validate, interviewInviteSchema } from '../middlewares/validators';
 import { authenticate } from '../middlewares/auth';
 
@@ -17,7 +17,7 @@ const router = Router();
  *       500:
  *         description: Server error
  */
-router.get('/summary', authenticate, InterviewController.getSummaryReport);
+router.get('/summary', authenticate, interviewController.getSummaryReport);
 // router.get('/summary', authenticate, InterviewController.getSummaryReport);
 
 /**
@@ -55,7 +55,7 @@ router.get('/summary', authenticate, InterviewController.getSummaryReport);
  *       500:
  *         description: Server error
  */
-router.get('/', authenticate, InterviewController.getAllInterviews);
+router.get('/', authenticate, interviewController.getAllInterviews);
 
 /**
  * @swagger
@@ -78,7 +78,7 @@ router.get('/', authenticate, InterviewController.getAllInterviews);
  *       500:
  *         description: Server error
  */
-router.get('/:id', authenticate, InterviewController.getInterviewById);
+router.get('/:id', authenticate, interviewController.getInterviewById);
 
 /**
  * @swagger
@@ -99,7 +99,7 @@ router.get('/:id', authenticate, InterviewController.getInterviewById);
  *       500:
  *         description: Server error
  */
-router.get('/vacancy/:job_serial_no', authenticate, InterviewController.getInterviewsByVacancy);
+router.get('/vacancy/:job_serial_no', authenticate, interviewController.getInterviewsByVacancy);
 
 /**
  * @swagger
@@ -146,7 +146,7 @@ router.post(
   '/application/:job_application_id/send-invite',
   authenticate,
   validate(interviewInviteSchema),
-  InterviewController.sendInterviewInvite
+  interviewController.sendInterviewInvite
 );
 
 /**
@@ -183,7 +183,7 @@ router.post(
  */
 router.get(
   '/:job_application_id/:user_num/:status',
-  InterviewController.processInvitationRequest
+  interviewController.processInvitationRequest
 );
 
 /**
@@ -198,6 +198,6 @@ router.get(
  *       500:
  *         description: Server error
  */
-router.get('/offers', authenticate, InterviewController.getOffersSent);
+router.get('/offers', authenticate, interviewController.getOffersSent);
 
 export default router;

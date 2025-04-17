@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Joi from 'joi';
-import { errorResponse } from '../utils/responseFormatter';
+import { errorResponse } from '../utils/responseHandler';
 
 export const validate = (schema: Joi.Schema) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -11,7 +11,7 @@ export const validate = (schema: Joi.Schema) => {
 
     if (error) {
       const errorMessage = error.details.map((detail) => detail.message).join(', ');
-      return errorResponse(res, errorMessage, 400);
+      errorResponse(res, errorMessage, 400);
     }
 
     next();

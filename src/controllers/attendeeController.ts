@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { successResponse, errorResponse } from '../utils/responseFormatter';
+import { successResponse, errorResponse } from '../utils/responseHandler';
 import { AttendeeService } from '../services/attendeeService';
 import { EmailService } from '../services/emailService';
 import { InterviewService } from '../services/interviewService';
@@ -20,7 +20,7 @@ export class AttendeeController {
       // Validate if interview exists
       const interview = await interviewService.getInterviewById(Number(interview_id));
       if (!interview) {
-        return errorResponse(res, 'Interview not found', 404);
+        errorResponse(res, 'Interview not found', 404);
       }
       
       // Create attendees
@@ -34,14 +34,14 @@ export class AttendeeController {
         await emailService.sendInternalInvite(interview, attendee);
       }
       
-      return successResponse(
+      successResponse(
         res, 
         'Interview Invite has been sent to the selected persons', 
         savedAttendees
       );
     } catch (error) {
       console.error('Error sending internal invite:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -53,15 +53,15 @@ export class AttendeeController {
       // Validate if interview exists
       const interview = await interviewService.getInterviewById(Number(interview_id));
       if (!interview) {
-        return errorResponse(res, 'Interview not found', 404);
+        errorResponse(res, 'Interview not found', 404);
       }
       
       const attendees = await attendeeService.getAttendeesByInterviewId(Number(interview_id));
       
-      return successResponse(res, 'List of attendees returned successfully', attendees);
+      successResponse(res, 'List of attendees returned successfully', attendees);
     } catch (error) {
       console.error('Error getting internal invitees:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 }

@@ -69,7 +69,7 @@ router.post(
 router.get(
   '/:interview_id/attendees',
   authenticate,
-  attendeeController.getAttendees
+  attendeeController.getInternalInvitees
 );
 
 export default router;

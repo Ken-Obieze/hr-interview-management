@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/env';
-import { errorResponse } from '../utils/responseFormatter';
+import { errorResponse } from '../utils/responseHandler';
 
 interface DecodedToken {
   id: number;
@@ -20,35 +20,30 @@ declare global {
   }
 }
 
-export const authenticate = (req: Request, res: Response, next: NextFunction) => {
+export const authenticate = (req: Request, res: Response, next: NextFunction): void => {
   try {
-    // Get token from Authorization header
     const authHeader = req.headers.authorization;
-    
+
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return errorResponse(res, 'Access denied. No token provided.', 401);
+      errorResponse(res, 'Access denied. No token provided.', 401);
+      return;
     }
-    
+
     const token = authHeader.split(' ')[1];
-    
-    // Verify token
     const decoded = jwt.verify(token, config.JWT_SECRET) as DecodedToken;
-    
-    // Add user info to request object
     req.user = decoded;
-    
     next();
   } catch (error) {
-    if (error instanceof jwt.JsonWebTokenError) {
-      return errorResponse(res, 'Invalid token.', 401);
-    }
     if (error instanceof jwt.TokenExpiredError) {
-      return errorResponse(res, 'Token expired.', 401);
+      errorResponse(res, 'Token expired.', 401);
+    } else if (error instanceof jwt.JsonWebTokenError) {
+      errorResponse(res, 'Invalid token.', 401);
+    } else {
+      errorResponse(res, 'Authentication failed.', 401);
     }
-    return errorResponse(res, 'Authentication failed.', 401);
   }
-  
 };
+
 
 // Middleware for role-based access control
 export const authorize = (roles: string[]) => {

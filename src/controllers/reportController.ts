@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { successResponse, errorResponse } from '../utils/responseFormatter';
+import { successResponse, errorResponse } from '../utils/responseHandler';
 import { ReportService } from '../services/reportService';
 import { InterviewService } from '../services/interviewService';
 import { EmailService } from '../services/emailService';
@@ -20,7 +20,7 @@ export class ReportController {
       // Validate if interview exists
       const interview = await interviewService.getInterviewById(Number(interview_id));
       if (!interview) {
-        return errorResponse(res, 'Interview not found', 404);
+        errorResponse(res, 'Interview not found', 404);
       }
       
       // Create report
@@ -37,10 +37,10 @@ export class ReportController {
       // Send email notification to management
       await emailService.sendInterviewReport(interview, report);
       
-      return successResponse(res, 'Interview report submitted successfully', report, 201);
+      successResponse(res, 'Interview report submitted successfully', report, 201);
     } catch (error) {
       console.error('Error submitting interview report:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -52,15 +52,15 @@ export class ReportController {
       // Validate if interview exists
       const interview = await interviewService.getInterviewById(Number(interview_id));
       if (!interview) {
-        return errorResponse(res, 'Interview not found', 404);
+        errorResponse(res, 'Interview not found', 404);
       }
       
       const reports = await reportService.getReportsByInterviewId(Number(interview_id));
       
-      return successResponse(res, 'Records fetched successfully', reports);
+      successResponse(res, 'Records fetched successfully', reports);
     } catch (error) {
       console.error('Error getting interview reports:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 }

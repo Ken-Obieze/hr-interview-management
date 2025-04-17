@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { successResponse, errorResponse } from '../utils/responseFormatter';
+import { successResponse, errorResponse } from '../utils/responseHandler';
 import { ContractService } from '../services/contractService';
 import { InterviewService } from '../services/interviewService';
 import { EmailService } from '../services/emailService';
@@ -20,7 +20,7 @@ export class ContractController {
       // Validate if interview exists
       const interview = await interviewService.getInterviewById(Number(interview_id));
       if (!interview) {
-        return errorResponse(res, 'Interview not found', 404);
+        errorResponse(res, 'Interview not found', 404);
       }
       
       // Create contract terms
@@ -32,10 +32,10 @@ export class ContractController {
       // Send email notification to management
       await emailService.sendContractTerms(interview, contract);
       
-      return successResponse(res, 'Contract terms submitted successfully', contract, 201);
+      successResponse(res, 'Contract terms submitted successfully', contract, 201);
     } catch (error) {
       console.error('Error submitting contract terms:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -48,7 +48,7 @@ export class ContractController {
       // Validate if interview exists
       const interview = await interviewService.getInterviewById(Number(interview_id));
       if (!interview) {
-        return errorResponse(res, 'Interview not found', 404);
+        errorResponse(res, 'Interview not found', 404);
       }
       
       // Update contract status
@@ -57,10 +57,10 @@ export class ContractController {
         contract_status
       );
       
-      return successResponse(res, 'Contract terms processed successfully', contract);
+      successResponse(res, 'Contract terms processed successfully', contract);
     } catch (error) {
       console.error('Error processing contract terms:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -72,19 +72,19 @@ export class ContractController {
       // Validate if interview exists
       const interview = await interviewService.getInterviewById(Number(interview_id));
       if (!interview) {
-        return errorResponse(res, 'Interview not found', 404);
+        errorResponse(res, 'Interview not found', 404);
       }
       
       const contract = await contractService.getContractByInterviewId(Number(interview_id));
       
       if (!contract) {
-        return errorResponse(res, 'Contract terms not found for this interview', 404);
+        errorResponse(res, 'Contract terms not found for this interview', 404);
       }
       
-      return successResponse(res, 'Contract terms retrieved successfully', contract);
+      successResponse(res, 'Contract terms retrieved successfully', contract);
     } catch (error) {
       console.error('Error getting contract terms:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 }

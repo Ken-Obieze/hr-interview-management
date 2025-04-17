@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { successResponse, errorResponse } from '../utils/responseFormatter';
+import { successResponse, errorResponse } from '../utils/responseHandler';
 import { InterviewService } from '../services/interviewService';
 import { EmailService } from '../services/emailService';
 import { PaginationService } from '../services/paginationService';
@@ -10,15 +10,15 @@ const interviewService = new InterviewService(prisma);
 const emailService = new EmailService();
 const paginationService = new PaginationService();
 
-class InterviewController {
+export class InterviewController {
   // Get Overview Summary Report
   async getSummaryReport(req: Request, res: Response) {
     try {
       const summary = await interviewService.getSummaryReport();
-      return successResponse(res, 'Summary Report on Interview', summary);
+      successResponse(res, 'Summary Report on Interview', summary);
     } catch (error) {
       console.error('Error getting summary report:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -42,10 +42,10 @@ class InterviewController {
         limit: Number(limit),
       });
 
-      return successResponse(res, 'Record returned', interviews, 200, pagination);
+      successResponse(res, 'Record returned', interviews, 200, pagination);
     } catch (error) {
       console.error('Error getting interviews:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -56,13 +56,13 @@ class InterviewController {
       const interview = await interviewService.getInterviewById(Number(id));
       
       if (!interview) {
-        return errorResponse(res, 'Interview not found', 404);
+        errorResponse(res, 'Interview not found', 404);
       }
       
-      return successResponse(res, 'Record returned', interview);
+      successResponse(res, 'Record returned', interview);
     } catch (error) {
       console.error('Error getting interview:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -88,10 +88,10 @@ class InterviewController {
         limit: Number(limit),
       });
 
-      return successResponse(res, 'Record returned', interviews, 200, pagination);
+      successResponse(res, 'Record returned', interviews, 200, pagination);
     } catch (error) {
       console.error('Error getting interviews by vacancy:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -109,10 +109,10 @@ class InterviewController {
       // Send email notification to applicant
       await emailService.sendInterviewInvite(savedInvite);
       
-      return successResponse(res, 'Interview Invite has been sent', savedInvite);
+      successResponse(res, 'Interview Invite has been sent', savedInvite);
     } catch (error) {
       console.error('Error sending interview invite:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -123,10 +123,10 @@ class InterviewController {
       
       await interviewService.updateInterviewStatus(job_application_id, user_num, status);
       
-      return successResponse(res, 'Interview invitation response has been submitted.', {});
+      successResponse(res, 'Interview invitation response has been submitted.', {});
     } catch (error) {
       console.error('Error processing invitation:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 
@@ -150,7 +150,7 @@ class InterviewController {
         limit: Number(limit),
       });
 
-      return successResponse(
+      successResponse(
         res, 
         'Records returned', 
         offers, 
@@ -159,9 +159,9 @@ class InterviewController {
       );
     } catch (error) {
       console.error('Error getting offers:', error);
-      return errorResponse(res);
+      errorResponse(res);
     }
   }
 }
 
-export default new InterviewController();
+export const interviewController = new InterviewController();
