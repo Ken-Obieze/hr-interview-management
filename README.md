@@ -32,7 +32,7 @@ Before running the application, ensure you have the following installed:
 
 - **Node.js** (version 16 or higher)
 - **npm** or **yarn**
-- A database system like **MySQL** (configured in the `.env` file)
+- A database system like **PostgreSQL** (configured in the `.env` file)
 
 ---
 
@@ -41,8 +41,8 @@ Before running the application, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/suburban-fiber-company/HCM_Interview_Management_API.git
-cd HCM_Interview_Management_API
+git clone https://github.com/Ken-Obieze/hr-interview-management
+cd hr-interview-management
 ```
 
 ---
