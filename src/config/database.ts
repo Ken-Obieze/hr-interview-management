@@ -1,24 +1,16 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
 // Middleware for logging
-type MiddlewareParams = {
-  model?: string;
-  action: string;
-  args: any;
-  dataPath: string[];
-  runInTransaction: boolean;
-};
-
-prisma.$use(async (params: MiddlewareParams, next: (params: MiddlewareParams) => Promise<any>) => {
+prisma.$use(async (params: Prisma.MiddlewareParams, next: (params: Prisma.MiddlewareParams) => Promise<any>) => {
   const before = Date.now();
   const result = await next(params);
   const after = Date.now();
-  
-  console.log(`Query ${params.model}.${params.action} took ${after - before}ms`);
-  
-  return result;
+
+  console.log(Query ${ params.model }.${ params.action } took ${ after - before}ms);
+
+return result;
 });
 
 // Handle connection errors

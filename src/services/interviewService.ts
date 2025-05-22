@@ -1,12 +1,12 @@
-import { PrismaClient } from '@prisma/client';
-enum InterviewStatus {
-    Pending = 'Pending',
-    Accepted = 'Accepted',
-    Rejected = 'Rejected',
-    Rescheduled = 'Rescheduled',
-    Cancelled = 'Cancelled',
-    Hired = 'Hired',
-}
+import { PrismaClient, InterviewStatus } from '@prisma/client';
+// enum InterviewStatus {
+//     Pending = 'Pending',
+//     Accepted = 'Accepted',
+//     Rejected = 'Rejected',
+//     Rescheduled = 'Rescheduled',
+//     Cancelled = 'Cancelled',
+//     Hired = 'Hired',
+// }
 interface InterviewQueryParams {
     search?: string;
     sortBy?: string;
@@ -269,20 +269,7 @@ export class InterviewService {
         const total = await this.prisma.hcmInterviews.count({ where });
 
         return {
-            offers: offers.map((interview: {
-                id: number;
-                job_serial_no: string;
-                full_name: string;
-                role_applied_for: string;
-                interview_date: Date;
-                interview_time: string;
-                interview_location: string;
-                is_attended: boolean;
-                interview_status: string;
-                instructions: string;
-                created_at: Date;
-                contract_terms: any;
-            }) => ({
+            offers: offers.map((interview) => ({
                 interview_details: {
                     id: interview.id,
                     job_serial_no: interview.job_serial_no,
@@ -293,7 +280,7 @@ export class InterviewService {
                     interview_location: interview.interview_location,
                     is_attended: interview.is_attended,
                     interview_status: interview.interview_status,
-                    instructions: interview.instructions,
+                    instructions: interview.instructions ?? '', // <-- handle possible null
                     created_at: interview.created_at,
                 },
                 hcm_contract_terms: interview.contract_terms,
